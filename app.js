@@ -7,7 +7,7 @@ var firebase = new Firebase("https://issgooglemap.firebaseio.com");
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: myData.iss_position['latitude'], lng: myData.iss_position['longitude']},
-    zoom: 8
+    zoom: 4
   });
 
   // Add marker on user click
@@ -33,16 +33,22 @@ function initMap() {
 }
 $('document').ready(function(){
 
+var doStuff = function() {
  $.ajax({
       type: "GET",
       url: "http://api.open-notify.org/iss-now.json",
       dataType: "jsonp",
       success: function (data) {
-         console.log(data.iss_position);
+         console.log('do stuff is being called');
          myData = data;
-         return myData;
+         firebase.push({lat: myData.iss_position['latitude'], lng: myData.iss_position['longitude']});
+         initMap();
+         // return myData;
       },
   });
+}
+
+var intervalId = setInterval(doStuff, 6000);
 
  $('#displayruns').on('click', function(e){
   e.preventDefault();
